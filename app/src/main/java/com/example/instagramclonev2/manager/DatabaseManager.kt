@@ -102,9 +102,11 @@ object DatabaseManager {
                     val postImg = document.getString("postImg")
                     val fullname = document.getString("fullname")
                     val userImg = document.getString("userImg")
+                    val currentDate = document.getString("currentDate")
 
                     val post = Post(id!!, caption!!, postImg!!)
                     post.uid = uid
+                    post.currentDate = currentDate!!
                     post.fullname = fullname!!
                     post.userImg = userImg!!
                     posts.add(post)
@@ -127,11 +129,13 @@ object DatabaseManager {
                     val postImg = document.getString("postImg")
                     val fullname = document.getString("fullname")
                     val userImg = document.getString("userImg")
+                    val currentDate = document.getString("currentDate")
 
                     val post = Post(id!!, caption!!, postImg!!)
                     post.uid = uid
                     post.fullname = fullname!!
                     post.userImg = userImg!!
+                    post.currentDate = currentDate!!
                     posts.add(post)
                 }
                 handler.onSuccess(posts)
