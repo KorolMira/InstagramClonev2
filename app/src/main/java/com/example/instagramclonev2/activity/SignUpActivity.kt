@@ -10,11 +10,13 @@ import android.widget.Toast
 import com.example.instagramclonev2.R
 import com.example.instagramclonev2.manager.AuthManager
 import com.example.instagramclonev2.manager.DatabaseManager
+import com.example.instagramclonev2.manager.PrefsManager
 import com.example.instagramclonev2.manager.handler.AuthHandler
 import com.example.instagramclonev2.manager.handler.DBUserHandler
 import com.example.instagramclonev2.model.User
 import com.example.instagramclonev2.utils.Extensions.toast
 import com.example.instagramclonev2.utils.Logger.d
+import com.example.instagramclonev2.utils.Utils
 import com.google.firebase.firestore.util.Logger
 import java.lang.Exception
 
@@ -77,6 +79,9 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun storeUserToDB(user: User) {
+        user.device_token = PrefsManager(this).loadDeviceToken()!!
+        user.device_id = Utils.getDeviceID(this)
+
         DatabaseManager.storeUser(user, object : DBUserHandler{
             override fun onSuccess(user: User?) {
                 dismissLoading()

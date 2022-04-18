@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.instagramclonev2.R
 import com.example.instagramclonev2.fragment.FavoriteFragment
 import com.example.instagramclonev2.fragment.HomeFragment
+import com.example.instagramclonev2.manager.AuthManager
 import com.example.instagramclonev2.model.Post
 import com.google.android.material.imageview.ShapeableImageView
 
@@ -29,8 +30,49 @@ class FavoriteAdapter(var fragment: FavoriteFragment, var items: ArrayList<Post>
         val post: Post = items[position]
         if (holder is PostViewHolder){
             var iv_post = holder.iv_post
+            var tv_caption = holder.tv_caption
+            var tv_fullname = holder.tv_fullname
+            var tv_time = holder.tv_time
+            var iv_profile = holder.iv_profile
+            var iv_like = holder.iv_like
+            var iv_more = holder.iv_more
 
-            Glide.with(fragment).load(post.userImg).into(iv_post)
+            tv_caption.text = post.caption
+            tv_fullname.text = post.fullname
+            tv_time.text = post.currentDate
+            iv_like.setOnClickListener {
+                if (post.isLiked){
+                    post.isLiked = false
+                    iv_like.setImageResource(R.drawable.ic_favorite)
+                }else{
+                    post.isLiked = true
+                    iv_like.setImageResource(R.drawable.ic_favorite_b)
+                }
+                fragment.likeOrUnlikePost(post)
+            }
+
+            if (post.isLiked){
+                iv_like.setImageResource(R.drawable.ic_favorite_b)
+            }else{
+                iv_like.setImageResource(R.drawable.ic_favorite)
+            }
+
+            val uid  = AuthManager.currentUser()!!.uid
+            if (uid == post.uid){
+                iv_more.visibility = View.VISIBLE
+            }else{
+                iv_more.visibility = View.GONE
+            }
+            iv_more.setOnClickListener {
+                fragment.showDeleteDialog(post)
+            }
+
+            Glide.with(fragment).load(post.userImg)
+                .placeholder(R.drawable.ic_person)
+                .error(R.drawable.ic_person)
+                .into(iv_profile)
+
+            Glide.with(fragment).load(post.postImg).into(iv_post)
         }
     }
 

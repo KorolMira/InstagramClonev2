@@ -1,6 +1,7 @@
 package com.example.instagramclonev2.fragment
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,10 +13,12 @@ import com.example.instagramclonev2.R
 import com.example.instagramclonev2.adapter.HomeAdapter
 import com.example.instagramclonev2.manager.AuthManager
 import com.example.instagramclonev2.manager.DatabaseManager
+import com.example.instagramclonev2.manager.handler.DBPostHandler
 import com.example.instagramclonev2.manager.handler.DBPostsHandler
 import com.example.instagramclonev2.model.Post
 import java.lang.Exception
 import java.lang.RuntimeException
+import com.example.instagramclonev2.utils.Utils
 
 class HomeFragment : BaseFragment() {
     val TAG = HomeFragment::class.java.simpleName
@@ -83,10 +86,40 @@ class HomeFragment : BaseFragment() {
         })
     }
 
+    fun likeOrUnlikePost(post: Post){
+        val uid = AuthManager.currentUser()!!.uid
+        DatabaseManager.likeFeedPost(uid, post)
+    }
+
+
+
 
     fun refreshAdapter(items: ArrayList<Post>){
         val adapter = HomeAdapter(this,items)
         recyclerView.adapter = adapter
+    }
+
+    fun showDeleteDialog(post: Post){
+        Utils.dialogDouble(requireContext(), getString(R.string.str_delete_post), object :
+            Utils.DialogListener {
+            override fun onCallback(isChosen: Boolean) {
+                if(isChosen){
+                    deletePost(post)
+                }
+            }
+        })
+    }
+
+    fun deletePost(post: Post) {
+        DatabaseManager.deletePost(post, object : DBPostHandler {
+            override fun onSuccess(post: Post) {
+                loadMyFeeds()
+            }
+
+            override fun onError(e: Exception) {
+
+            }
+        })
     }
 
     /**

@@ -1,18 +1,19 @@
 package com.example.instagramclonev2.activity
 
-import android.content.Intent
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.view.View
-import android.view.WindowManager
 import com.example.instagramclonev2.R
 import com.example.instagramclonev2.manager.AuthManager
+import com.example.instagramclonev2.manager.PrefsManager
+import com.example.instagramclonev2.utils.Logger
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 
 //In SplashActivity, user can visit to SignInActivity or MainActivity
 
 class SplashActivity : BaseActivity() {
+    val TAG = SplashActivity::class.java.simpleName
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -22,6 +23,7 @@ class SplashActivity : BaseActivity() {
 
     private fun initView() {
         countDownTimer()
+        loadFCMToken()
     }
 
     private fun countDownTimer() {
@@ -35,5 +37,19 @@ class SplashActivity : BaseActivity() {
                 }
             }
         }.start()
+    }
+
+    private fun loadFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Logger.d(TAG, "Fetching FCM registration token failed")
+                return@OnCompleteListener
+            }
+            // Get new FCM registration token
+            // Save it in locally to use later
+            val token = task.result
+            Logger.d(TAG, token.toString())
+            PrefsManager(this).storeDeviceToken(token.toString())
+        })
     }
 }

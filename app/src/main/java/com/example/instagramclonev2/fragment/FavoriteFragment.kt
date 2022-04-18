@@ -10,7 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.instagramclonev2.R
 import com.example.instagramclonev2.adapter.FavoriteAdapter
 import com.example.instagramclonev2.adapter.HomeAdapter
+import com.example.instagramclonev2.manager.AuthManager
+import com.example.instagramclonev2.manager.DatabaseManager
+import com.example.instagramclonev2.manager.handler.DBPostHandler
+import com.example.instagramclonev2.manager.handler.DBPostsHandler
 import com.example.instagramclonev2.model.Post
+import com.example.instagramclonev2.utils.Utils
+import java.lang.Exception
 
 class FavoriteFragment : BaseFragment() {
     lateinit var recyclerView: RecyclerView
@@ -25,24 +31,57 @@ class FavoriteFragment : BaseFragment() {
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.setLayoutManager(GridLayoutManager(activity,1))
 
-
-
-        refreshAdapter(loadPosts())
+        loadLikeFeeds()
     }
 
-    private fun loadPosts(): ArrayList<Post> {
+    fun loadLikeFeeds(){
+        showLoading(requireActivity())
+        val uid = AuthManager.currentUser()!!.uid
+        DatabaseManager.loadLikeFeeds(uid, object : DBPostsHandler{
+            override fun onSuccess(posts: ArrayList<Post>) {
+                dismissLoading()
+                refreshAdapter(posts)
+            }
 
-        val items = ArrayList<Post>()
-        items.add(Post("https://images.unsplash.com/photo-1649119947511-e56da6f1fa1c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"))
-        items.add(Post("https://images.unsplash.com/photo-1647376955675-dbef1657003c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"))
-        items.add(Post("https://images.unsplash.com/photo-1592660716763-09efba6db4e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=580&q=80"))
+            override fun onError(e: Exception) {
+                dismissLoading()
+            }
 
-        return items
-
+        })
     }
 
     fun refreshAdapter(items: ArrayList<Post>){
         val adapter = FavoriteAdapter(this,items)
         recyclerView.adapter = adapter
+    }
+
+    fun likeOrUnlikePost(post: Post) {
+        val uid = AuthManager.currentUser()!!.uid
+        DatabaseManager.likeFeedPost(uid, post)
+
+        loadLikeFeeds()
+    }
+
+    fun showDeleteDialog(post: Post){
+        Utils.dialogDouble(requireContext(), getString(R.string.str_delete_post), object :
+            Utils.DialogListener {
+            override fun onCallback(isChosen: Boolean) {
+                if(isChosen){
+                    deletePost(post)
+                }
+            }
+        })
+    }
+
+    fun deletePost(post: Post) {
+        DatabaseManager.deletePost(post, object : DBPostHandler {
+            override fun onSuccess(post: Post) {
+                loadLikeFeeds()
+            }
+
+            override fun onError(e: Exception) {
+
+            }
+        })
     }
 }

@@ -1,6 +1,7 @@
 package com.example.instagramclonev2.model
 
 import android.annotation.SuppressLint
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -14,6 +15,8 @@ class Post {
     var uid : String = ""
     var fullname: String = ""
     var userImg: String = ""
+
+    var isLiked: Boolean = false
 
     constructor(postImg: String){
         this.postImg = postImg
@@ -30,8 +33,9 @@ class Post {
         this.postImg = postImg
     }
 
-    private fun setCurrentTime(){
+    open fun setCurrentTime(){
         val sdf = SimpleDateFormat("dd/M/yyyy hh:mm")
         currentDate = sdf.format(Date())
     }
+
 }
