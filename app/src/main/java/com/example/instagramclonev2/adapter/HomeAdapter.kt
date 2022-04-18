@@ -36,7 +36,11 @@ class HomeAdapter(var fragment: HomeFragment, var items: ArrayList<Post>) : Base
             tv_fullname.text = post.fullname
             tv_time.text = post.currentDate
 
-            Glide.with(fragment).load(post.userImg).into(iv_profile)
+            Glide.with(fragment).load(post.userImg)
+                .placeholder(R.drawable.ic_person)
+                .error(R.drawable.ic_person)
+                .into(iv_profile)
+
             Glide.with(fragment).load(post.postImg).into(iv_post)
         }
     }

@@ -32,7 +32,25 @@ class SearchAdapter(var fragment: SearchFragment, var items: ArrayList<User>): B
                 .placeholder(R.drawable.ic_person)
                 .error(R.drawable.ic_person)
                 .into(holder.iv_profile)
+
+            var tv_follow = holder.tv_follow
+            tv_follow.setOnClickListener{
+                if(!user.isFollowed){
+                    tv_follow.text = fragment.getString(R.string.str_following)
+                }else{
+                    tv_follow.text = fragment.getString(R.string.str_follow)
+                }
+                fragment.followOrUnfollow(user)
+            }
+
+            if(!user.isFollowed){
+                tv_follow.text = fragment.getString(R.string.str_follow)
+            }else{
+                tv_follow.text = fragment.getString(R.string.str_following)
+            }
         }
+
+
     }
 
     class UserViewHolder(view: View): RecyclerView.ViewHolder(view){

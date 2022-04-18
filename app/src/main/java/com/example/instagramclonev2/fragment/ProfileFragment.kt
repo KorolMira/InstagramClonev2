@@ -20,6 +20,7 @@ import com.example.instagramclonev2.manager.DatabaseManager
 import com.example.instagramclonev2.manager.StorageManager
 import com.example.instagramclonev2.manager.handler.DBPostsHandler
 import com.example.instagramclonev2.manager.handler.DBUserHandler
+import com.example.instagramclonev2.manager.handler.DBUsersHandler
 import com.example.instagramclonev2.manager.handler.StorageHandler
 import com.example.instagramclonev2.model.Post
 import com.example.instagramclonev2.model.User
@@ -35,6 +36,8 @@ class ProfileFragment : BaseFragment() {
     lateinit var tv_email: TextView
     lateinit var tv_posts: TextView
     lateinit var iv_profile: ShapeableImageView
+    lateinit var tv_following: TextView
+    lateinit var tv_followers: TextView
 
     var pickedPhoto: Uri? = null
     var allPhotos = ArrayList<Uri>()
@@ -56,6 +59,8 @@ class ProfileFragment : BaseFragment() {
         tv_email = view.findViewById(R.id.tv_email)
         tv_posts = view.findViewById(R.id.tv_posts)
         iv_profile = view.findViewById(R.id.iv_profile1)
+        tv_following = view.findViewById(R.id.tv_following)
+        tv_followers = view.findViewById(R.id.tv_followers)
 
         val iv_logout = view.findViewById<ImageView>(R.id.iv_logOut)
         iv_logout.setOnClickListener {
@@ -68,6 +73,36 @@ class ProfileFragment : BaseFragment() {
 
         loadUserInfo()
         loadMyPosts()
+        loadMyFollowing()
+        loadMyFollowers()
+    }
+
+    private fun loadMyFollowers(){
+        val uid = AuthManager.currentUser()!!.uid
+        DatabaseManager.loadFollowers(uid, object : DBUsersHandler{
+            override fun onSuccess(user: ArrayList<User>) {
+                tv_followers.text = user.size.toString()
+            }
+
+            override fun onError(e: Exception) {
+                TODO("Not yet implemented")
+            }
+
+        })
+    }
+
+    private fun loadMyFollowing(){
+        val uid = AuthManager.currentUser()!!.uid
+        DatabaseManager.loadFollowing(uid, object : DBUsersHandler{
+            override fun onSuccess(user: ArrayList<User>) {
+                tv_following.text = user.size.toString()
+            }
+
+            override fun onError(e: Exception) {
+                TODO("Not yet implemented")
+            }
+
+        })
     }
 
     private fun loadMyPosts(){

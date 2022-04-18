@@ -21,11 +21,18 @@ class HomeFragment : BaseFragment() {
     val TAG = HomeFragment::class.java.simpleName
     lateinit var recyclerView: RecyclerView
     private var listener: HomeListener? = null
+    var feeds = ArrayList<Post>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         initView(view)
         return view
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        if (isVisibleToUser && feeds.size > 0){
+            loadMyFeeds()
+        }
     }
 
     /**
@@ -64,7 +71,9 @@ class HomeFragment : BaseFragment() {
         DatabaseManager.loadFeeds(uid, object : DBPostsHandler{
             override fun onSuccess(posts: ArrayList<Post>) {
                 dismissLoading()
-                refreshAdapter(posts)
+                feeds.clear()
+                feeds.addAll(posts)
+                refreshAdapter(feeds)
             }
 
             override fun onError(e: Exception) {

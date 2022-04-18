@@ -11,7 +11,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.instagramclonev2.R
 import com.example.instagramclonev2.adapter.SearchAdapter
+import com.example.instagramclonev2.manager.AuthManager
 import com.example.instagramclonev2.manager.DatabaseManager
+import com.example.instagramclonev2.manager.DatabaseManager.unFollowUser
+import com.example.instagramclonev2.manager.handler.DBFollowHandler
+import com.example.instagramclonev2.manager.handler.DBUserHandler
 import com.example.instagramclonev2.manager.handler.DBUsersHandler
 import com.example.instagramclonev2.model.User
 import java.lang.Exception
@@ -19,7 +23,7 @@ import java.lang.Exception
 /***
  * In SearchFragment, all registered users can be found by searching keyword and following
  */
-class SearchFragment : BaseFragment() {
+class   SearchFragment : BaseFragment() {
     val TAG = SearchFragment::class.java.simpleName
     lateinit var rv_search: RecyclerView
     var items = ArrayList<User>()
@@ -51,7 +55,6 @@ class SearchFragment : BaseFragment() {
 
         })
         loadUser()
-        refreshAdapter(loadUsers())
     }
 
     private fun refreshAdapter(items: ArrayList<User>) {
@@ -72,40 +75,99 @@ class SearchFragment : BaseFragment() {
     }
 
     private fun loadUser(){
+        val uid = AuthManager.currentUser()!!.uid
         DatabaseManager.loadUsers(object : DBUsersHandler {
-
             override fun onSuccess(users: ArrayList<User>) {
-                items.clear()
-                items.addAll(users)
-                refreshAdapter(items)
-            }
+                DatabaseManager.loadFollowing(uid, object : DBUsersHandler{
+                    override fun onSuccess(following: ArrayList<User>) {
+                        items.clear()
+                        items.addAll(margedUsers(uid, users, following))
+                        refreshAdapter(items)
+                    }
 
+                    override fun onError(e: Exception) {
+
+                    }
+
+                })
+
+            }
             override fun onError(e: Exception) {
 
             }
         })
     }
 
-    private fun loadUsers() : ArrayList<User>{
-        items = ArrayList<User>()
-        items.add(User("Islombek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Muslimbek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Usmonbek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Ikrombek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Islombek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Muslimbek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Usmonbek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Ikrombek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Islombek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Muslimbek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Usmonbek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Ikrombek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Islombek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Muslimbek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Usmonbek","nasriddinov.islom.19@gmail.com"))
-        items.add(User("Ikrombek","nasriddinov.islom.19@gmail.com"))
-
+    private fun margedUsers(uid: String, users: ArrayList<User>, following: ArrayList<User>): Collection<User> {
+            val items = ArrayList<User>()
+        for (u in users){
+            val user = u
+            for (f in following){
+                if (u.uid == f.uid){
+                    user.isFollowed = true
+                    break
+                }
+            }
+            if (uid != user.uid){
+                items.add(user)
+            }
+        }
         return items
+    }
 
+
+    fun followOrUnfollow(to: User) {
+        val uid = AuthManager.currentUser()!!.uid
+        if (!to.isFollowed) {
+            followUser(uid, to)
+        } else {
+            unFollowUser(uid, to)
+        }
+    }
+
+    private fun followUser(uid: String, to: User){
+        DatabaseManager.loadUser(uid, object : DBUserHandler {
+            override fun onSuccess(me: User?) {
+                DatabaseManager.followUser(me!!, to , object : DBFollowHandler {
+                    override fun onSuccess(isFollowed: Boolean) {
+                        to.isFollowed = true
+                        DatabaseManager.storePostsToMyFeed(uid, to)
+                    }
+
+                    override fun onError(e: Exception) {
+                        TODO("Not yet implemented")
+                    }
+
+                })
+            }
+
+            override fun onError(e: Exception) {
+                TODO("Not yet implemented")
+            }
+
+        })
+    }
+
+    private fun unFollowUser(uid: String, to: User){
+        DatabaseManager.loadUser(uid, object : DBUserHandler{
+            override fun onSuccess(me: User?) {
+                DatabaseManager.unFollowUser(me!!, to , object : DBFollowHandler{
+                    override fun onSuccess(isFollowed: Boolean) {
+                        to.isFollowed = false
+                        //DatabaseManager.removePostsFromMyFeed(uid, to)
+                    }
+
+                    override fun onError(e: Exception) {
+
+                    }
+
+                })
+            }
+
+            override fun onError(e: Exception) {
+
+            }
+
+        })
     }
 }
