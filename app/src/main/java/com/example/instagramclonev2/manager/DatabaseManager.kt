@@ -1,5 +1,6 @@
 package com.example.instagramclonev2.manager
 
+import android.util.Log
 import com.example.instagramclonev2.manager.handler.*
 import com.example.instagramclonev2.model.Post
 import com.example.instagramclonev2.model.User
@@ -36,7 +37,7 @@ object DatabaseManager {
         reference.document(post.id).set(post)
     }
 
-    fun removepostsFromMyFeed(uid: String, to: User){
+    fun removePostsFromMyFeed(uid: String, to: User){
         loadPosts(to.uid, object : DBPostsHandler{
             override fun onSuccess(posts: ArrayList<Post>) {
                 for (post in posts){
@@ -216,6 +217,7 @@ object DatabaseManager {
                     val fullname = document.getString("fullname")
                     val userImg = document.getString("userImg")
                     val currentDate = document.getString("currentDate")
+                    Log.d("@@@@@", currentDate.toString())
 
                     val post = Post(id!!, caption!!, postImg!!)
                     post.uid = uid
@@ -243,6 +245,7 @@ object DatabaseManager {
                     val fullname = document.getString("fullname")
                     val userImg = document.getString("userImg")
                     val currentDate = document.getString("currentDate")
+                    Log.d("@@@@@@", currentDate.toString())
 
                     val post = Post(id!!, caption!!, postImg!!)
                     post.uid = uid

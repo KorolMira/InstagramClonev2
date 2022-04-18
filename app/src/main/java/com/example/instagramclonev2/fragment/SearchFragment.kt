@@ -154,7 +154,7 @@ class   SearchFragment : BaseFragment() {
                 DatabaseManager.unFollowUser(me!!, to , object : DBFollowHandler{
                     override fun onSuccess(isFollowed: Boolean) {
                         to.isFollowed = false
-                        //DatabaseManager.removePostsFromMyFeed(uid, to)
+                        DatabaseManager.removePostsFromMyFeed(uid, to)
                     }
 
                     override fun onError(e: Exception) {

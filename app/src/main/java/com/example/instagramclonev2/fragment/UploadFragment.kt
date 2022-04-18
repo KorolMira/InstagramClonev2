@@ -121,7 +121,6 @@ class UploadFragment : BaseFragment() {
         }
 
     private fun uploadNewPost(){
-
         val caption =  et_caption.text.toString().trim()
         if (caption.isNotEmpty() && pickedPhoto != null){
             uploadPostPhoto(caption, pickedPhoto!!)
@@ -134,6 +133,8 @@ class UploadFragment : BaseFragment() {
             override fun onSuccess(imgUrl: String) {
                 val post = Post(caption, imgUrl)
                 val uid = AuthManager.currentUser()!!.uid
+                post.setCurrentTime()
+
 
                 DatabaseManager.loadUser(uid, object : DBUserHandler{
                     override fun onSuccess(user: User?) {

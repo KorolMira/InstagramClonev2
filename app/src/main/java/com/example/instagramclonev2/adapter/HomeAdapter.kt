@@ -1,5 +1,6 @@
 package com.example.instagramclonev2.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,7 @@ class HomeAdapter(var fragment: HomeFragment, var items: ArrayList<Post>) : Base
             tv_caption.text = post.caption
             tv_fullname.text = post.fullname
             tv_time.text = post.currentDate
+            Log.d("@@@@", post.currentDate)
 
             Glide.with(fragment).load(post.userImg)
                 .placeholder(R.drawable.ic_person)
