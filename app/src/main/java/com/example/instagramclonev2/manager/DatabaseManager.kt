@@ -1,6 +1,5 @@
 package com.example.instagramclonev2.manager
 
-import android.util.Log
 import com.example.instagramclonev2.manager.handler.*
 import com.example.instagramclonev2.model.Post
 import com.example.instagramclonev2.model.User
@@ -37,7 +36,7 @@ object DatabaseManager {
         reference.document(post.id).set(post)
     }
 
-    fun removePostsFromMyFeed(uid: String, to: User){
+    fun removepostsFromMyFeed(uid: String, to: User){
         loadPosts(to.uid, object : DBPostsHandler{
             override fun onSuccess(posts: ArrayList<Post>) {
                 for (post in posts){
@@ -217,7 +216,6 @@ object DatabaseManager {
                     val fullname = document.getString("fullname")
                     val userImg = document.getString("userImg")
                     val currentDate = document.getString("currentDate")
-                    Log.d("@@@@@", currentDate.toString())
 
                     val post = Post(id!!, caption!!, postImg!!)
                     post.uid = uid
@@ -245,80 +243,18 @@ object DatabaseManager {
                     val fullname = document.getString("fullname")
                     val userImg = document.getString("userImg")
                     val currentDate = document.getString("currentDate")
-                    var isLiked = document.getBoolean("isLiked")
-                    if (isLiked == null) isLiked = false
-                    val userId = document.getString("uid")
-
 
                     val post = Post(id!!, caption!!, postImg!!)
-                    post.uid = userId!!
-                    post.currentDate = currentDate!!
+                    post.uid = uid
                     post.fullname = fullname!!
                     post.userImg = userImg!!
-                    post.isLiked = isLiked
+                    post.currentDate = currentDate!!
                     posts.add(post)
                 }
                 handler.onSuccess(posts)
             }else{
                 handler.onError(it.exception!!)
             }
-        }
-    }
-
-    fun loadLikeFeeds(uid: String, handler: DBPostsHandler){
-        var reference = database.collection(USER_PATH).document(uid).collection(FEED_PATH)
-            .whereEqualTo("isLiked", true)
-        reference.get().addOnCompleteListener {
-            val posts = ArrayList<Post>()
-            if (it.isSuccessful){
-                for(document in it.result!!){
-                    val id = document.getString("id")
-                    val caption = document.getString("caption")
-                    val postImg = document.getString("postImg")
-                    val fullname = document.getString("fullname")
-                    val userImg = document.getString("userImg")
-                    val currentDate = document.getString("currentDate")
-                    var isLiked = document.getBoolean("isLiked")
-                    if (isLiked == null) isLiked = false
-                    val userId = document.getString("uid")
-
-
-                    val post = Post(id!!, caption!!, postImg!!)
-                    post.uid = userId!!
-                    post.currentDate = currentDate!!
-                    post.fullname = fullname!!
-                    post.userImg = userImg!!
-                    post.isLiked = isLiked
-                    posts.add(post)
-                }
-                handler.onSuccess(posts)
-            }else{
-                handler.onError(it.exception!!)
-            }
-        }
-    }
-
-    fun likeFeedPost(uid: String, post: Post) {
-        database.collection(USER_PATH).document(uid).collection(FEED_PATH).document(post.id)
-            .update("isLiked", post.isLiked)
-        if (uid == post.uid){
-            database.collection(USER_PATH).document(uid).collection(POST_PATH).document(post.id)
-                .update("isLiked", post.isLiked)
-        }
-    }
-
-    fun deletePost(post: Post, handler: DBPostHandler){
-        val reference1 = database.collection(USER_PATH).document(post.uid).collection(USER_PATH)
-        reference1.document(post.id).delete().addOnSuccessListener {
-
-            val reference2 = database.collection(USER_PATH).document(post.uid).collection(FEED_PATH)
-            reference2.document(post.id).delete().addOnSuccessListener {
-                handler.onSuccess(post)
-            }.addOnFailureListener {
-                handler.onError(it)
-            }
-        }.addOnFailureListener {
-            handler.onError(it)
         }
     }
 
