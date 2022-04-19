@@ -1,5 +1,6 @@
 package com.example.instagramclonev2.manager
 
+import android.annotation.SuppressLint
 import com.example.instagramclonev2.manager.handler.*
 import com.example.instagramclonev2.model.Post
 import com.example.instagramclonev2.model.User
@@ -14,6 +15,7 @@ private var FOLLOWING_PATH = "following"
 private var FOLLOWERS_PATH = "followers"
 
 object DatabaseManager {
+    @SuppressLint("StaticFieldLeak")
     private var database = FirebaseFirestore.getInstance()
 
     fun likeFeedPost(uid: String, post: Post) {
@@ -25,10 +27,10 @@ object DatabaseManager {
     }
 
     fun deletePost(post: Post, handler: DBPostHandler) {
-        val reference1 = database.collection(USER_PATH).document(post.uid).collection(POST_PATH)
+        val reference1 = database.collection(USER_PATH).document(post.uid).collection(FEED_PATH)
         reference1.document(post.id).delete().addOnSuccessListener {
 
-            val reference2 = database.collection(USER_PATH).document(post.uid).collection(FEED_PATH)
+            val reference2 = database.collection(USER_PATH).document(post.uid).collection(POST_PATH)
             reference2.document(post.id).delete().addOnSuccessListener {
                 handler.onSuccess(post)
             }.addOnFailureListener {
@@ -266,12 +268,16 @@ object DatabaseManager {
                     val fullname = document.getString("fullname")
                     val userImg = document.getString("userImg")
                     val currentDate = document.getString("currentDate")
+                    var isLiked = document.getBoolean("isLiked")
+                    if (isLiked == null) isLiked = false
+                    val userId = document.getString("uid")
 
                     val post = Post(id!!, caption!!, postImg!!)
-                    post.uid = uid
+                    post.uid = userId!!
                     post.fullname = fullname!!
                     post.userImg = userImg!!
                     post.currentDate = currentDate!!
+                    post.isLiked = isLiked
                     posts.add(post)
                 }
                 handler.onSuccess(posts)

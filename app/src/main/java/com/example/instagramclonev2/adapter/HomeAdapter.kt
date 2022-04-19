@@ -22,7 +22,7 @@ class HomeAdapter(var fragment: HomeFragment, var items: ArrayList<Post>) : Base
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view: View =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_post_favorite, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_post_home, parent, false)
         return PostViewHolder(view)
     }
 
@@ -92,7 +92,7 @@ class HomeAdapter(var fragment: HomeFragment, var items: ArrayList<Post>) : Base
             tv_fullname = view.findViewById(R.id.tv_fullname)
             tv_caption = view.findViewById(R.id.tv_caption)
             tv_time = view.findViewById(R.id.tv_time)
-            iv_more = view.findViewById(R.id.iv_more1)
+            iv_more = view.findViewById(R.id.iv_more)
             iv_share = view.findViewById(R.id.iv_share)
             iv_like = view.findViewById(R.id.iv_like)
 

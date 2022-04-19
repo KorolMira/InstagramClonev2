@@ -92,7 +92,7 @@ class FavoriteAdapter(var fragment: FavoriteFragment, var items: ArrayList<Post>
             tv_fullname = view.findViewById(R.id.tv_fullname)
             tv_caption = view.findViewById(R.id.tv_caption)
             tv_time = view.findViewById(R.id.tv_time)
-            iv_more = view.findViewById(R.id.iv_more)
+            iv_more = view.findViewById(R.id.iv_more1)
             iv_share = view.findViewById(R.id.iv_share)
             iv_like = view.findViewById(R.id.iv_like)
 
