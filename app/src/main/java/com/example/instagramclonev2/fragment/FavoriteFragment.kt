@@ -37,7 +37,7 @@ class FavoriteFragment : BaseFragment() {
     fun loadLikeFeeds(){
         showLoading(requireActivity())
         val uid = AuthManager.currentUser()!!.uid
-        DatabaseManager.loadLikeFeeds(uid, object : DBPostsHandler{
+        DatabaseManager.loadLikedFeeds(uid, object : DBPostsHandler{
             override fun onSuccess(posts: ArrayList<Post>) {
                 dismissLoading()
                 refreshAdapter(posts)
