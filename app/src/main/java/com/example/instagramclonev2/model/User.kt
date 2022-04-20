@@ -8,7 +8,7 @@ class User {
     var userImg: String = ""
 
     var device_id = ""
-    var device_type = ""
+    var device_type = "A"
     var device_token = ""
 
     var isFollowed: Boolean = false
@@ -29,5 +29,9 @@ class User {
         this.fullname = fullname
         this.userImg = userImg
         this.password = password
+    }
+
+    override fun toString(): String {
+        return "User(uid='$uid', fullname='$fullname', email='$email', password='$password', userImg='$userImg', isFollowed=$isFollowed, device_id='$device_id', device_type='$device_type', device_token='$device_token')"
     }
 }

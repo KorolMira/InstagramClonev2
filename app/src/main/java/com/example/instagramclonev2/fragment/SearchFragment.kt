@@ -3,10 +3,12 @@ package com.example.instagramclonev2.fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.instagramclonev2.R
@@ -18,6 +20,8 @@ import com.example.instagramclonev2.manager.handler.DBFollowHandler
 import com.example.instagramclonev2.manager.handler.DBUserHandler
 import com.example.instagramclonev2.manager.handler.DBUsersHandler
 import com.example.instagramclonev2.model.User
+import com.example.instagramclonev2.utils.Extensions
+import com.example.instagramclonev2.utils.Utils
 import java.lang.Exception
 
 /***
@@ -125,26 +129,25 @@ class   SearchFragment : BaseFragment() {
         }
     }
 
-    private fun followUser(uid: String, to: User){
+    private fun followUser(uid: String, to: User) {
         DatabaseManager.loadUser(uid, object : DBUserHandler {
             override fun onSuccess(me: User?) {
-                DatabaseManager.followUser(me!!, to , object : DBFollowHandler {
+                DatabaseManager.followUser(me!!, to, object : DBFollowHandler {
                     override fun onSuccess(isFollowed: Boolean) {
-                        to.isFollowed = true
+                        to.isFollowed = isFollowed
                         DatabaseManager.storePostsToMyFeed(uid, to)
+                        Utils.sendNote(requireContext(), me, to.device_token)
                     }
 
                     override fun onError(e: Exception) {
-                        TODO("Not yet implemented")
-                    }
 
+                    }
                 })
             }
 
             override fun onError(e: Exception) {
-                TODO("Not yet implemented")
-            }
 
+            }
         })
     }
 

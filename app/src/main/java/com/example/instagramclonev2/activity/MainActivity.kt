@@ -55,19 +55,14 @@ class MainActivity : BaseActivity(), HomeFragment.HomeListener, UploadFragment.U
         }
 
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int,
-            ) {
-            }
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) { }
 
             override fun onPageSelected(position: Int) {
                 index = position
                 bottomNavigationView.getMenu().getItem(index).setChecked(true)
             }
 
-            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageScrollStateChanged(state: Int) { }
         })
 
         // Home and Upload Fragments are global for communication purpose

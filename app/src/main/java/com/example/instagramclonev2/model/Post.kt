@@ -15,12 +15,10 @@ class Post {
     var uid : String = ""
     var fullname: String = ""
     var userImg: String = ""
+    var device_token: String = ""
 
     var isLiked: Boolean = false
 
-    constructor(postImg: String){
-        this.postImg = postImg
-    }
 
     constructor(caption: String, postImg: String){
         this.caption = caption

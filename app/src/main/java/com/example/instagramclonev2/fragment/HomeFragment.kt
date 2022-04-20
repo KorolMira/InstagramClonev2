@@ -15,7 +15,9 @@ import com.example.instagramclonev2.manager.AuthManager
 import com.example.instagramclonev2.manager.DatabaseManager
 import com.example.instagramclonev2.manager.handler.DBPostHandler
 import com.example.instagramclonev2.manager.handler.DBPostsHandler
+import com.example.instagramclonev2.manager.handler.DBUserHandler
 import com.example.instagramclonev2.model.Post
+import com.example.instagramclonev2.model.User
 import java.lang.Exception
 import java.lang.RuntimeException
 import com.example.instagramclonev2.utils.Utils
@@ -86,9 +88,17 @@ class HomeFragment : BaseFragment() {
         })
     }
 
-    fun likeOrUnlikePost(post: Post){
+    fun likeOrUnLikePost(post: Post) {
         val uid = AuthManager.currentUser()!!.uid
         DatabaseManager.likeFeedPost(uid, post)
+        DatabaseManager.loadUser(uid, object : DBUserHandler {
+            override fun onSuccess(me: User?) {
+                Utils.sendNote(requireContext(), me!!, post.device_token)
+            }
+
+            override fun onError(e: Exception) {
+            }
+        })
     }
 
 

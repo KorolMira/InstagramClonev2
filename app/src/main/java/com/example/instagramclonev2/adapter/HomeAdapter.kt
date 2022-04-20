@@ -48,7 +48,7 @@ class HomeAdapter(var fragment: HomeFragment, var items: ArrayList<Post>) : Base
                     post.isLiked = true
                     iv_like.setImageResource(R.drawable.ic_favorite_b)
                 }
-                fragment.likeOrUnlikePost(post)
+                fragment.likeOrUnLikePost(post)
             }
 
             if (post.isLiked){

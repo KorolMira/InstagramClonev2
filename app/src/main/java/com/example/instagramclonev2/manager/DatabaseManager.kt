@@ -196,8 +196,10 @@ object DatabaseManager {
                     val fullname = document.getString("fullname")
                     val email = document.getString("email")
                     val userImg = document.getString("userImg")
+                    val device_token = document.getString("device_token")
                     val user = User(fullname!!, email!!, userImg!!)
                     user.uid = uid!!
+                    user.device_token = device_token!!
                     users.add(user)
                 }
                 handler.onSuccess(users)

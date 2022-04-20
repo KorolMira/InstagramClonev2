@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".serevice.FCMService"
+        <service android:name=".service.FCMService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>

@@ -1,4 +1,4 @@
-package com.example.instagramclonev2.serevice
+package com.example.instagramclonev2.service
 
 import com.example.instagramclonev2.utils.Logger
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -14,7 +14,7 @@ class FCMService : FirebaseMessagingService() {
     }
 
     private fun sendRegistrationToServer(token: String) {
-
+        // TODO : send token to tour server
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
